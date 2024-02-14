@@ -1,4 +1,5 @@
 using MyPersonalWebAPI.Models;
+using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
 using MyPersonalWebAPI.Services.WhatsappClound.SendMessage;
 using MyPersonalWebAPI.Util;
 
@@ -19,6 +20,7 @@ builder.Services.Configure<SecretsOptions>(options =>
 // Add services to the container.
 builder.Services.AddSingleton<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
 builder.Services.AddSingleton<IUtil, Util>();
+builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
