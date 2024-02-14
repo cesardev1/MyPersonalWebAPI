@@ -9,7 +9,6 @@ namespace MyPersonalWebAPI.Services.OpenIA.ChatGPT
     public class ChatGPTServices : IChatGPTServices
     {
         private readonly ILogger<ChatGPTServices> _logger;
-        private readonly OpenAIAPI openAIAPI;
         private readonly IOptions<SecretsOptions> _options;
         private readonly List<Conversation> conversations;
 
@@ -19,7 +18,8 @@ namespace MyPersonalWebAPI.Services.OpenIA.ChatGPT
         {
             _logger = logger;
             _options = options;
-            openAIAPI = new OpenAIAPI(_options.Value.ApiKeyOpenIA);
+            
+            conversations = new List<Conversation>();
         }
 
         public async Task<string> Execute(string textUser, string user)
@@ -27,6 +27,7 @@ namespace MyPersonalWebAPI.Services.OpenIA.ChatGPT
             try
             {
 
+                var openAIAPI = new OpenAIAPI(_options.Value.ApiKeyOpenIA);
                 var chat = conversations.FirstOrDefault(x => x.RequestParameters.user == user);
                 if (chat == null)
                 {
