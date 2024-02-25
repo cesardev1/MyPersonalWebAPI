@@ -26,9 +26,6 @@ namespace MyPersonalWebAPI.Controllers
         {
             try
             {
-                user.CreatedDate = DateTime.UtcNow;
-                user.LastModifiedDate = user.CreatedDate;
-                user.UserId = Guid.NewGuid();
 
                 _userServices.Add(user);
                 return Ok();
