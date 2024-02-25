@@ -15,8 +15,10 @@ namespace MyPersonalWebAPI.Models
         [Key]
         public int RoleId { get; set; }
         public string Name { get; set; }
-        public string Permission { get; set; }
+        public List<RolePermission> RolePermissions { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime LastModifiedDate { get; set; }
+
         [JsonIgnore]
         public List<User> Users { get; set; }
     }
