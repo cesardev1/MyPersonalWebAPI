@@ -17,11 +17,11 @@ builder.Services.Configure<SecretsOptions>(builder.Configuration.GetSection("Sec
 
 builder.Services.Configure<SecretsOptions>(options =>
 {
-    options.AccessTokenWhatsapp = Environment.GetEnvironmentVariable("AccessTokenWhatsapp");
-    options.ApiKeyWhatsapp = Environment.GetEnvironmentVariable("ApiKeyWhatsapp");
-    options.WhatsappPhoneId = Environment.GetEnvironmentVariable("WhatsappPhoneId");
-    options.ApiKeyOpenIA = Environment.GetEnvironmentVariable("ApiKeyOpenIA");
-    options.JWTSecretKey = Environment.GetEnvironmentVariable("JWTSecretKey");
+    options.AccessTokenWhatsapp = Environment.GetEnvironmentVariable("ACCESS_TOKEN_WHATSAPP");
+    options.ApiKeyWhatsapp = Environment.GetEnvironmentVariable("API_KEY_WHATSAPP");
+    options.WhatsappPhoneId = Environment.GetEnvironmentVariable("WHATSAPP_PHONE_ID");
+    options.ApiKeyOpenIA = Environment.GetEnvironmentVariable("API_KEY_OPEN_IA");
+    options.JWTSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
     options.PostgreConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
 });
 
