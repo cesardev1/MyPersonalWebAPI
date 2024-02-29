@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MyPersonalWebAPI.Models
 {
     public class Permission
@@ -11,9 +14,14 @@ namespace MyPersonalWebAPI.Models
 
     public class RolePermission
     {
-        public int RoleId { get; set; }
-        public Roles RoleId { get; set; }
+        [Key]
+        public int RolePermissionId { get; set; }
 
+        [Column(Order = 1)]
+        public int RoleId { get; set; }
+        public Roles Role { get; set; }
+
+        [Column(Order = 2)]
         public int PermissionId { get; set; }
         public Permission Permission { get; set; }
     }
