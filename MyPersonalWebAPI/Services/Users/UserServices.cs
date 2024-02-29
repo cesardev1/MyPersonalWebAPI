@@ -31,6 +31,7 @@ namespace MyPersonalWebAPI.Services.Users
                 _context.Users.Add(newUser);
 
                 await _context.SaveChangesAsync();
+                newUser.Password="";
 
                 return newUser;
             }
