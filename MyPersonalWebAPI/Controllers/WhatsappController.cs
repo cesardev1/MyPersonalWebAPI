@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyPersonalWebAPI.Models;
+using MyPersonalWebAPI.Models.Whatsapp;
 using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
 using MyPersonalWebAPI.Services.WhatsappClound.SendMessage;
 using MyPersonalWebAPI.Util;
@@ -86,6 +87,7 @@ namespace MyPersonalWebAPI.Controllers
             try
             {
                 var Message = body.Entry[0]?.Changes[0]?.Value?.Messages[0];
+                await _whatsappCloudSendMessageServices.SaveMessage(Message,MessageDirection.Incoming);
 
                 if (Message != null)
                 {

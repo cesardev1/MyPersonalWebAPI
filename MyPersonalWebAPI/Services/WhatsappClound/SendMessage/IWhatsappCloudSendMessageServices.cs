@@ -1,4 +1,5 @@
 ﻿using MyPersonalWebAPI.Models;
+using MyPersonalWebAPI.Models.Whatsapp;
 
 namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
 {
@@ -9,5 +10,6 @@ namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
         bool ValidationTokenUrlWhatsapp(string token);
 
         string GetUserText(Message message);
+        Task<bool> SaveMessage(Message message, MessageDirection direction);
     }
 }
