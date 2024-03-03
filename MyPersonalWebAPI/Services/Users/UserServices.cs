@@ -75,7 +75,19 @@ namespace MyPersonalWebAPI.Services.Users
             }
         }
 
-        
+        public async Task<User> GetByPhone(string phone)
+        {
+            try
+            {
+                return await base._context.Users.Include(a => a.Role ).FirstOrDefaultAsync(x=> x.Phone.Equals(phone));
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex.Message,ex.StackTrace);
+                return null;
+            }
+        }
+
         public async  Task<User> UserAuthenticate(string username, string password)
         {
             var user = await GetByName(username);
