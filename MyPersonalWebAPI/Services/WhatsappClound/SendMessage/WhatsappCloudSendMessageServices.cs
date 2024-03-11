@@ -13,11 +13,11 @@ namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
     {
         private readonly IOptions<SecretsOptions> _options;
         private readonly ILogger<WhatsappCloudSendMessageServices> _logger;
-        private readonly UserServices _userServices;
+        private readonly IUserServices _userServices;
         private readonly DatabaseContext _context;
         public WhatsappCloudSendMessageServices(IOptions<SecretsOptions> options,
                                                 ILogger<WhatsappCloudSendMessageServices> logger,
-                                                UserServices userServices,
+                                                IUserServices userServices,
                                                 DatabaseContext context)
         {
             _options = options;

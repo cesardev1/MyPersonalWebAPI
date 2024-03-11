@@ -28,7 +28,7 @@ builder.Services.Configure<SecretsOptions>(options =>
 // Add services to the container.
 
 
-builder.Services.AddSingleton<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
+builder.Services.AddScoped<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
 builder.Services.AddScoped<IJWTServices,JWTServices>();
 builder.Services.AddSingleton<IUtil, Util>();
 builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
