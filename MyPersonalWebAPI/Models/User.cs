@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyPersonalWebAPI.Models
 {
-    [Index(nameof(UserId),IsUnique =true)]
+    [Index(nameof(Username),IsUnique =true)]
     public class User
     {
         [Key]
