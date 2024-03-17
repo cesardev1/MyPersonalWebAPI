@@ -28,6 +28,17 @@ namespace MyPersonalWebAPI.Models.Whatsapp
 
         [Required]
         public DateTime Timestamp { get; set; }
+
+        [Required]
+        public MessageStatus Status { get; set; }
+    }
+
+    public enum MessageStatus
+    {
+        Sent,
+        Delivered,
+        Read,
+        Unsent
     }
 
     public enum MessageDirection
