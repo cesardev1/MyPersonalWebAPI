@@ -2,6 +2,7 @@
 using MyPersonalWebAPI.Models;
 using MyPersonalWebAPI.Models.Whatsapp;
 using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
+using MyPersonalWebAPI.Services.WhatsappClound;
 using MyPersonalWebAPI.Services.WhatsappClound.SendMessage;
 using MyPersonalWebAPI.Util;
 
@@ -11,56 +12,23 @@ namespace MyPersonalWebAPI.Controllers
     [Route("api/[controller]")]
     public class WhatsappController : ControllerBase
     {
-        private readonly IWhatsappCloudSendMessageServices _whatsappCloudSendMessageServices;
-        private readonly IUtil _util;
-        private readonly ILogger<WhatsappController> _logger;
-        private readonly IChatGPTServices _chatGPTServices;
-        
 
-        public WhatsappController(IWhatsappCloudSendMessageServices whatsappCloudSendMessageServices,
-                                  IUtil util,
-                                  ILogger<WhatsappController> logger,
-                                  IChatGPTServices chatGPTServices)
+
+        private readonly ILogger<WhatsappController> _logger;
+
+        private readonly IWhatsAppMessageHandler _whatsAppMessageHandler;
+        public WhatsappController(ILogger<WhatsappController> logger,
+                                  IWhatsAppMessageHandler whatsAppMessageHandler)
         {
             _logger = logger;
-            _util = util;
-            _whatsappCloudSendMessageServices = whatsappCloudSendMessageServices;
-            _chatGPTServices = chatGPTServices;
+            _whatsAppMessageHandler = whatsAppMessageHandler;
         }
 
         [HttpGet("test/{phone}")]
         public async Task<IActionResult> Sample(string phone)
         {
-
-            var data = new[]
-            {
-                new
-                {
-                    type= "text",
-                    text=  "Cesar"
-                },
-                new
-                {
-                    type= "text",
-                    text=  "Aniversario de Novios"
-                },
-                new
-                {
-                    type= "text",
-                    text=  "05/06/2023"
-                },
-                new
-                {
-                    type= "text",
-                    text=  "12:00"
-                },
-            };
-            //BackgroundJob.Schedule(()=>  _whatsappCloudSendMessage.Execute(data), TimeSpan.FromMinutes(3));
-            var objectMessage = _util.TemplateMessage(phone, "recordatorios", data);
-            await _whatsappCloudSendMessageServices.Execute(objectMessage);
-            //BackgroundJob.Schedule(() => _whatsappCloudSendMessage.Execute(objectMessage), TimeSpan.FromMinutes(3));
-
-            return Ok(" ok sample");
+            await _whatsAppMessageHandler.Sample(phone);
+            return Ok();
         }
 
 
@@ -72,7 +40,7 @@ namespace MyPersonalWebAPI.Controllers
 
 
             //TODO: this can be refactored by or's so that only one conditional remains
-            if (challenge != null && token != null && _whatsappCloudSendMessageServices.ValidationTokenUrlWhatsapp(token))
+            if (challenge != null && token != null && _whatsAppMessageHandler.UrlTokenValidator(token,challenge))
             {
                 return Ok(challenge);
             }
@@ -83,34 +51,8 @@ namespace MyPersonalWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> RecivedMessage([FromBody] WhatsAppCloudModel body)
         {
-
-            try
-            {
-                var Message = body.Entry[0]?.Changes[0]?.Value?.Messages[0];
-                await _whatsappCloudSendMessageServices.SaveMessage(Message,MessageDirection.Incoming);
-
-                if (Message != null)
-                {
-                    var userNumber = Message.From;
-                    _logger.LogInformation("new message from:" + userNumber);
-                    if (userNumber.Length > 12)
-                        userNumber = userNumber.Remove(2, 1);
-                    var userText = _whatsappCloudSendMessageServices.GetUserText(Message);
-
-                    var responseChatGPT = await _chatGPTServices.Execute(userText, userNumber);
-                    var objectMesage = _util.TextMessage(responseChatGPT, userNumber);
-
-
-                    await _whatsappCloudSendMessageServices.Execute(objectMesage);
-                }
-                return Ok("EVENT_RECEIVED");
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return Ok("EVENT_RECEIVED");
-            }
+            var response = await _whatsAppMessageHandler.AutoResponse(body);
+            return Ok(response);
         }
     }
 }
