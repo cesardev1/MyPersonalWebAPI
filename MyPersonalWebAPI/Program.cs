@@ -5,6 +5,7 @@ using MyPersonalWebAPI.Services.JWT;
 using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
 using MyPersonalWebAPI.Services.Roles;
 using MyPersonalWebAPI.Services.Users;
+using MyPersonalWebAPI.Services.WhatsappClound;
 using MyPersonalWebAPI.Services.WhatsappClound.SendMessage;
 using MyPersonalWebAPI.Util;
 using Npgsql.EntityFrameworkCore;
@@ -25,15 +26,20 @@ builder.Services.Configure<SecretsOptions>(options =>
     options.PostgreConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
 });
 
-// Add services to the container.
+// Database services
 
-
-builder.Services.AddScoped<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
-builder.Services.AddScoped<IJWTServices,JWTServices>();
-builder.Services.AddSingleton<IUtil, Util>();
-builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
 builder.Services.AddScoped<IRolesServices, RolesServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IWhatsAppMessageRepository,WhatsAppMessageRepository>();
+
+// Add services to the container.
+builder.Services.AddScoped<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
+builder.Services.AddScoped<IJWTServices,JWTServices>();
+builder.Services.AddScoped<IWhatsAppMessageHandler,WhatsAppMessageHandler>();
+builder.Services.AddScoped<WhatsAppUtilities>();
+builder.Services.AddSingleton<IUtil, Util>();
+builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
+
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")));
 var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
