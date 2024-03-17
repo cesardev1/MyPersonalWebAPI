@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using MyPersonalWebAPI.Models.Whatsapp;
 using MyPersonalWebAPI.Services.Users;
 using MyPersonalWebAPI.Data;
+using MyPersonalWebAPI.Services.WhatsappClound;
 
 namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
 {
@@ -13,7 +14,6 @@ namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
     {
         private readonly IOptions<SecretsOptions> _options;
         private readonly ILogger<WhatsappCloudSendMessageServices> _logger;
-        private readonly IUserServices _userServices;
         private readonly DatabaseContext _context;
         public WhatsappCloudSendMessageServices(IOptions<SecretsOptions> options,
                                                 ILogger<WhatsappCloudSendMessageServices> logger,
@@ -22,7 +22,6 @@ namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
         {
             _options = options;
             _logger = logger;
-            _userServices = userServices;
             _context = context;
         }
         public async Task<bool> Execute(object model)
@@ -54,61 +53,9 @@ namespace MyPersonalWebAPI.Services.WhatsappClound.SendMessage
             }
         }
 
-        public string GetUserText(Message message)
-        {
-            string typeMessage = message.Type.ToUpper();
+
+        
 
 
-            if (typeMessage == "TEXT")
-                return message.Text.Body;
-
-            else if (typeMessage == "INTERACTIVE")
-            {
-                string interactiveType = message.Interactive.Type.ToUpper();
-
-                if (interactiveType == "LIST_REPLY")
-                {
-                    return message.Interactive.List_Reply.Title;
-                }
-                else if (interactiveType == "BUTTON_REPLY")
-                {
-                    return message.Interactive.Button_Reply.Title;
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            return string.Empty;
-        }
-
-        public async Task<bool> SaveMessage(Message message, MessageDirection direction)
-        {
-            try
-            {
-                var user =await _userServices.GetByPhone(message.From);
-
-                var messageDb = new WhatsAppMessage();
-                messageDb.Direction = direction;
-                messageDb.MessageText = message.Text.Body;
-                messageDb.UserId = user.UserId;
-                messageDb.MessageId = message.Id;
-                messageDb.Timestamp = DateTime.UtcNow;
-
-                await _context.whatsAppMessages.AddAsync(messageDb);
-                return true;
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex,ex.StackTrace);
-                return false;
-            }
-        }
-
-        public bool ValidationTokenUrlWhatsapp(string token)
-        {
-            bool result = _options.Value.AccessTokenWhatsapp.Equals(token);
-            return result;
-        }
     }
 }
