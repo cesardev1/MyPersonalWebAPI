@@ -98,7 +98,7 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
                 if(userNumberPhone.Length > 12)
                     userNumberPhone = userNumberPhone.Remove(2,1);
 
-                var userData =await _userServices.GetByPhone(whatsappMessage.From);
+                var userData =await _userServices.GetByPhone(userNumberPhone);
                     
                 if(userData == null)
                     throw new UnauthorizedAccessException("unregistered user");
