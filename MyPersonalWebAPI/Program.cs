@@ -26,6 +26,9 @@ builder.Services.Configure<SecretsOptions>(options =>
     options.PostgreConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
 });
 
+
+
+
 // Database services
 
 builder.Services.AddScoped<IRolesServices, RolesServices>();
@@ -39,6 +42,7 @@ builder.Services.AddScoped<IWhatsAppMessageHandler,WhatsAppMessageHandler>();
 builder.Services.AddScoped<WhatsAppUtilities>();
 builder.Services.AddSingleton<IUtil, Util>();
 builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
+builder.Services.AddScoped<IUserManager,UserManager>();
 
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")));
