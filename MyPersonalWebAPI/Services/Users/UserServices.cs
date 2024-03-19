@@ -19,29 +19,6 @@ namespace MyPersonalWebAPI.Services.Users
             _rolesServices = rolesServices;
         }
 
-        public async Task<User> CreateUser(User newUser)
-        {
-            try
-            {
-                newUser.CreatedDate = DateTime.UtcNow;
-                newUser.UserId = Guid.NewGuid();
-                newUser.LastModifiedDate = newUser.CreatedDate;
-                newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-
-                _context.Users.Add(newUser);
-
-                await _context.SaveChangesAsync();
-                newUser.Password="";
-
-                return newUser;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.StackTrace);
-                return null;
-            }
-            
-        }
         public async override Task<User> GetById(string id)
         {
             using (var context = base._context.Database.BeginTransaction())
@@ -51,10 +28,15 @@ namespace MyPersonalWebAPI.Services.Users
                     var idGuid = new Guid(id);
                     return await base._context.Users.Include(a=>a.Role).FirstOrDefaultAsync(x => x.UserId ==idGuid);
                 }
+                catch (FormatException ex)
+                {
+                    _logger.LogError($"The user ID {id} does not have a valid GUID format", ex);
+                    throw new ArgumentException($"The user ID {id} does not have a valid GUID format", ex);
+                }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex,ex.StackTrace);
-                    return null;
+                    _logger.LogError($"Error to get user with ID '{id}'",ex);
+                    throw;
                 }
             }
         }
@@ -69,8 +51,8 @@ namespace MyPersonalWebAPI.Services.Users
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex, ex.StackTrace);
-                    return null;
+                    _logger.LogError($"Error to get user '{name}'",ex);
+                    throw;
                 }
             }
         }
@@ -83,18 +65,10 @@ namespace MyPersonalWebAPI.Services.Users
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex.Message,ex.StackTrace);
-                return null;
+                _logger.LogError($"Error to get user with '{phone}'",ex);
+                throw;
             }
         }
 
-        public async  Task<User> UserAuthenticate(string username, string password)
-        {
-            var user = await GetByName(username);
-
-            if (user !=null && BCrypt.Net.BCrypt.Verify(password, user.Password))
-                return user;
-            return null;
-        }
     }
 }

@@ -11,30 +11,35 @@ namespace MyPersonalWebAPI.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserServices _userServices;
+        private readonly IUserManager _userManager;
         private readonly ILogger<UserController> _logger;
-        private readonly IJWTServices _JWTServices;
-        public UserController(IUserServices userServices,
+        public UserController(IUserManager userManager,
                               ILogger<UserController> logger,
                               IJWTServices JWTServices)
         {
-            _userServices = userServices;
+            _userManager = userManager;
             _logger = logger;
-            _JWTServices = JWTServices;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] User user)
         {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
             try
             {
 
-                await _userServices.CreateUser(user);
+                await _userManager.CreateUser(user);
                 return Ok();
+            }
+            catch(ArgumentException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.StackTrace);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
 
@@ -44,20 +49,22 @@ namespace MyPersonalWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LogIn([FromBody] User userData)
         {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
             try
             {
-                var user = await _userServices.UserAuthenticate(userData.Username, userData.Password);
-                if(user == null)
-                {
-                    return Unauthorized();
-                }
-
-                var tokenString = _JWTServices.GenerateToken(user.Username);
-                return Ok(tokenString);
+                var token  = await _userManager.UserAuthenticate(userData.Username, userData.Password);
+                                
+                return Ok(token);
+            }
+            catch(UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex,ex.Message);
+                return Unauthorized(ex.Message);
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex, ex.StackTrace);
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(500, "Internal Server Error");
             }
         }
