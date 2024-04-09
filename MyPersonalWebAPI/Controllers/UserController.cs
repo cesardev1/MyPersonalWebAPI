@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using MyPersonalWebAPI.Auth;
 using MyPersonalWebAPI.Models;
+using MyPersonalWebAPI.Models.Request;
+using MyPersonalWebAPI.Services.Auth;
 using MyPersonalWebAPI.Services.JWT;
 using MyPersonalWebAPI.Services.Users;
 
@@ -13,12 +18,15 @@ namespace MyPersonalWebAPI.Controllers
     {
         private readonly IUserManager _userManager;
         private readonly ILogger<UserController> _logger;
+        private readonly IApiKeyManager _apikeyManager;
         public UserController(IUserManager userManager,
                               ILogger<UserController> logger,
-                              IJWTServices JWTServices)
+                              IJWTServices JWTServices,
+                              IApiKeyManager apikeyManager)
         {
             _userManager = userManager;
             _logger = logger;
+            _apikeyManager = apikeyManager;
         }
 
         [HttpPost]
@@ -63,6 +71,32 @@ namespace MyPersonalWebAPI.Controllers
                 return Unauthorized(ex.Message);
             }
             catch (System.Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        // creat endopoint to add new apikey to user
+        [Authorize]
+        [HttpPost("apikey")]
+        public async Task<IActionResult> AddApiKey([FromBody] ApikeyRequest apiKey)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            try
+            {
+                // get user id from token
+                var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+                var key = await _apikeyManager.CreateApiKeyAsync(apiKey.Name, userId);
+                return Ok(key);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(500, "Internal Server Error");
