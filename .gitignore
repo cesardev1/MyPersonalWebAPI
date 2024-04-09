@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /.vscode
 /.mono
 */.mono
+/.husky
