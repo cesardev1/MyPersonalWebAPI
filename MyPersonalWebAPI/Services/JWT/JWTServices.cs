@@ -24,7 +24,7 @@ namespace MyPersonalWebAPI.Services.JWT
             _logger = logger;
         }
 
-        public string GenerateToken(string username)
+        public string GenerateToken(User user)
         {
             var symmetricKey = Encoding.ASCII.GetBytes(_secretsOptions.Value.JWTSecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -33,7 +33,11 @@ namespace MyPersonalWebAPI.Services.JWT
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, username)
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim("UserId", user.UserId.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.MobilePhone, user.Phone),  
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)

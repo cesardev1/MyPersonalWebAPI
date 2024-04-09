@@ -58,7 +58,7 @@ namespace MyPersonalWebAPI.Services.Users
                 if(!BCrypt.Net.BCrypt.Verify(password, user.Password))
                     throw new UnauthorizedAccessException("Incorrect password");
 
-                var tokenString = _JWTServices.GenerateToken(user.Username);
+                var tokenString = _JWTServices.GenerateToken(user);
 
                 return tokenString;
             }

@@ -5,7 +5,7 @@ namespace MyPersonalWebAPI.Services.JWT
 {
     public interface IJWTServices
     {
-        public string GenerateToken(string username);
+        public string GenerateToken(User user);
         public bool VerifyToken(string token);
     }
 }
