@@ -1,6 +1,13 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using MyPersonalWebAPI.Auth;
 using MyPersonalWebAPI.Data;
 using MyPersonalWebAPI.Models;
+using MyPersonalWebAPI.Services;
+using MyPersonalWebAPI.Services.Auth;
 using MyPersonalWebAPI.Services.JWT;
 using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
 using MyPersonalWebAPI.Services.Roles;
@@ -42,6 +49,9 @@ builder.Services.AddScoped<IWhatsAppMessageHandler,WhatsAppMessageHandler>();
 builder.Services.AddScoped<WhatsAppUtilities>();
 builder.Services.AddSingleton<IUtil, Util>();
 builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
+builder.Services.AddScoped<ApiKeyUtilities>();
+builder.Services.AddScoped<IApiKeyRepository,ApiKeyRepository>();
+builder.Services.AddScoped<IApiKeyManager,ApiKeyManager>();
 builder.Services.AddScoped<IUserManager,UserManager>();
 
 
@@ -52,11 +62,52 @@ builder.Services.AddEntityFrameworkNpgsql().AddDbContext<DatabaseContext>(option
     options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING"));
 });
 
+// Add services to Auth
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET_KEY")))
+    };
+});
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c=>
+{
+    //title
+    c.SwaggerDoc("v1", new() { Title = "MyPersonalWebAPI", Version = "v1" });
+
+    // Add JWT Bearer
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Name="Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme="Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
+        }
+    }); 
+});
 
 var app = builder.Build();
 
