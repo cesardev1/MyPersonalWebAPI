@@ -18,7 +18,7 @@ namespace MyPersonalWebAPI.Services.OpenIA.ChatGPT
         {
             _logger = logger;
             _options = options;
-            
+
             conversations = new List<Conversation>();
         }
 

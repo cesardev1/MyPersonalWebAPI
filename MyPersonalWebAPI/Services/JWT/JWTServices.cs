@@ -9,7 +9,7 @@ using System.Text;
 
 namespace MyPersonalWebAPI.Services.JWT
 {
-    public class JWTServices: IJWTServices
+    public class JWTServices : IJWTServices
     {
         private readonly IUserServices _userServices;
         private readonly ILogger<JWTServices> _logger;
@@ -37,7 +37,7 @@ namespace MyPersonalWebAPI.Services.JWT
                     new Claim("UserId", user.UserId.ToString()),
                     new Claim(ClaimTypes.Role, user.Role.Name),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.MobilePhone, user.Phone),  
+                    new Claim(ClaimTypes.MobilePhone, user.Phone),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)
@@ -51,7 +51,7 @@ namespace MyPersonalWebAPI.Services.JWT
         public bool VerifyToken(string token)
         {
             var symmetricKey = Encoding.ASCII.GetBytes(_secretsOptions.Value.JWTSecretKey);
-            var tokenHandler = new  JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
 
             try
             {

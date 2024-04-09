@@ -14,7 +14,7 @@ namespace MyPersonalWebAPI.Auth
         public DateTime DateAtUpdated { get; set; }
         public Status CurrentStatus { get; set; }
         public Guid UserId { get; set; }
-        
+
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
     }

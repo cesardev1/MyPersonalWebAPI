@@ -32,7 +32,7 @@ namespace MyPersonalWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] User user)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
@@ -40,7 +40,7 @@ namespace MyPersonalWebAPI.Controllers
                 await _userManager.CreateUser(user);
                 return Ok();
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
@@ -57,17 +57,17 @@ namespace MyPersonalWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LogIn([FromBody] User userData)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             try
             {
-                var token  = await _userManager.UserAuthenticate(userData.Username, userData.Password);
-                                
+                var token = await _userManager.UserAuthenticate(userData.Username, userData.Password);
+
                 return Ok(token);
             }
-            catch(UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                _logger.LogWarning(ex,ex.Message);
+                _logger.LogWarning(ex, ex.Message);
                 return Unauthorized(ex.Message);
             }
             catch (System.Exception ex)

@@ -3,14 +3,14 @@ using MyPersonalWebAPI.Services.Auth;
 
 namespace MyPersonalWebAPI.Services
 {
-    public class ApiKeyManager: IApiKeyManager
+    public class ApiKeyManager : IApiKeyManager
     {
         private readonly ILogger<ApiKeyManager> _logger;
         private readonly IApiKeyRepository _apiKeyRepository;
         private readonly ApiKeyUtilities _apiKeyUtilities;
         public ApiKeyManager(
             IApiKeyRepository apiKeyRepository,
-            ILogger<ApiKeyManager> logger, 
+            ILogger<ApiKeyManager> logger,
             ApiKeyUtilities apiKeyUtilities)
         {
             _logger = logger;
@@ -54,7 +54,7 @@ namespace MyPersonalWebAPI.Services
 
                 // Crear una nueva instancia de ApiKey
                 var newApiKey = new ApiKey();
-                
+
                 newApiKey.ApiKeyId = Guid.NewGuid();
                 newApiKey.Key = apiKey;
                 newApiKey.Name = name;
@@ -62,7 +62,7 @@ namespace MyPersonalWebAPI.Services
                 newApiKey.DateAtUpdated = DateTime.UtcNow;
                 newApiKey.CurrentStatus = Status.Pending;
                 newApiKey.UserId = userId;
-                
+
 
                 // Guardar la nueva clave de API en la base de datos
                 await _apiKeyRepository.Add(newApiKey);

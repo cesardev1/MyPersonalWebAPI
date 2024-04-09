@@ -1,6 +1,6 @@
 ﻿namespace MyPersonalWebAPI.Util
 {
-    public class Util:IUtil
+    public class Util : IUtil
     {
         public object TextMessage(string message, string number)
         {

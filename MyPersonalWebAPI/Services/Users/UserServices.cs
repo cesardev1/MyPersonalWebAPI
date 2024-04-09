@@ -26,7 +26,7 @@ namespace MyPersonalWebAPI.Services.Users
                 try
                 {
                     var idGuid = new Guid(id);
-                    return await base._context.Users.Include(a=>a.Role).FirstOrDefaultAsync(x => x.UserId ==idGuid);
+                    return await base._context.Users.Include(a => a.Role).FirstOrDefaultAsync(x => x.UserId == idGuid);
                 }
                 catch (FormatException ex)
                 {
@@ -35,7 +35,7 @@ namespace MyPersonalWebAPI.Services.Users
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError($"Error to get user with ID '{id}'",ex);
+                    _logger.LogError($"Error to get user with ID '{id}'", ex);
                     throw;
                 }
             }
@@ -51,7 +51,7 @@ namespace MyPersonalWebAPI.Services.Users
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError($"Error to get user '{name}'",ex);
+                    _logger.LogError($"Error to get user '{name}'", ex);
                     throw;
                 }
             }
@@ -61,11 +61,11 @@ namespace MyPersonalWebAPI.Services.Users
         {
             try
             {
-                return await base._context.Users.Include(a => a.Role ).FirstOrDefaultAsync(x=> x.Phone.Equals(phone));
+                return await base._context.Users.Include(a => a.Role).FirstOrDefaultAsync(x => x.Phone.Equals(phone));
             }
             catch (System.Exception ex)
             {
-                _logger.LogError($"Error to get user with '{phone}'",ex);
+                _logger.LogError($"Error to get user with '{phone}'", ex);
                 throw;
             }
         }

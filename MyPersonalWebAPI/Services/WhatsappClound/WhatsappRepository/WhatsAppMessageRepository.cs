@@ -3,22 +3,22 @@ using MyPersonalWebAPI.Data;
 using MyPersonalWebAPI.Models;
 using MyPersonalWebAPI.Models.Whatsapp;
 using MyPersonalWebAPI.Services;
- 
+
 namespace MyPersonalWebAPI.Services.WhatsappClound
 {
-    class WhatsAppMessageRepository: ServiceBase<WhatsAppMessage>,IWhatsAppMessageRepository
+    class WhatsAppMessageRepository : ServiceBase<WhatsAppMessage>, IWhatsAppMessageRepository
     {
         private readonly ILogger<WhatsAppMessageRepository> _logger;
         public WhatsAppMessageRepository(DatabaseContext context,
-                                         ILogger<WhatsAppMessageRepository> logger):base(context)
+                                         ILogger<WhatsAppMessageRepository> logger) : base(context)
         {
-            _context=context;
-            _logger=logger;
+            _context = context;
+            _logger = logger;
         }
-        
+
         public async Task<bool> SaveMessage(WhatsAppMessage message)
         {
-            using(var transaction = await _context.Database.BeginTransactionAsync())
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -29,7 +29,7 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
                 }
                 catch (System.Exception ex)
                 {
-                    _logger.LogError(ex,ex.StackTrace);
+                    _logger.LogError(ex, ex.StackTrace);
                     await transaction.RollbackAsync();
                     return false;
                 }

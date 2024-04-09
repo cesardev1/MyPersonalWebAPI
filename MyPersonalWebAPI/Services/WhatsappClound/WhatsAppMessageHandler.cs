@@ -9,7 +9,7 @@ using MyPersonalWebAPI.Services.OpenIA.ChatGPT;
 
 namespace MyPersonalWebAPI.Services.WhatsappClound
 {
-    public class WhatsAppMessageHandler: IWhatsAppMessageHandler
+    public class WhatsAppMessageHandler : IWhatsAppMessageHandler
     {
         private readonly IWhatsappCloudSendMessageServices _whatsappCloudSendMessageServices;
         private readonly ILogger<WhatsAppMessageHandler> _logger;
@@ -20,7 +20,7 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
         private readonly IChatGPTServices _chatGPTServices;
         public WhatsAppMessageHandler(ILogger<WhatsAppMessageHandler> logger,
                                       IUtil util,
-                                      IWhatsappCloudSendMessageServices whatsappCloudSendMessageServices, 
+                                      IWhatsappCloudSendMessageServices whatsappCloudSendMessageServices,
                                       WhatsAppUtilities whatsAppUtilities,
                                       IWhatsAppMessageRepository whatsAppMessageRepository,
                                       IUserServices userServices,
@@ -70,7 +70,7 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
             }
             catch (System.Exception ex)
             {
-                _logger.LogError(ex,ex.StackTrace);
+                _logger.LogError(ex, ex.StackTrace);
                 return false;
             }
         }
@@ -90,32 +90,33 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
             {
                 var whatsappMessage = message.Entry[0].Changes[0].Value.Messages[0];
 
-                if(whatsappMessage == null)
+                if (whatsappMessage == null)
                     throw new ArgumentException("message without text");
 
                 var userNumberPhone = whatsappMessage.From;
-                    
-                if(userNumberPhone.Length > 12)
-                    userNumberPhone = userNumberPhone.Remove(2,1);
 
-                var userData =await _userServices.GetByPhone(userNumberPhone);
-                    
-                if(userData == null)
+                if (userNumberPhone.Length > 12)
+                    userNumberPhone = userNumberPhone.Remove(2, 1);
+
+                var userData = await _userServices.GetByPhone(userNumberPhone);
+
+                if (userData == null)
                     throw new UnauthorizedAccessException("unregistered user");
 
                 string textMessage = _whatsAppUtilities.GetUserText(whatsappMessage);
 
-                var messageToSave = new WhatsAppMessage{
+                var messageToSave = new WhatsAppMessage
+                {
                     MessageText = textMessage,
                     MessageId = whatsappMessage.Id,
                     Direction = MessageDirection.Incoming,
                     UserId = userData.UserId,
                     Timestamp = DateTime.UtcNow,
-                     Status = MessageStatus.Unsent
+                    Status = MessageStatus.Unsent
                 };
 
                 var responseChatGPT = await _chatGPTServices.Execute(textMessage, userData.UserId.ToString());
-                var objectMessage = _util.TextMessage(responseChatGPT,userNumberPhone);
+                var objectMessage = _util.TextMessage(responseChatGPT, userNumberPhone);
 
                 await _whatsappCloudSendMessageServices.Execute(objectMessage);
                 messageToSave.Status = MessageStatus.Sent;
@@ -124,11 +125,11 @@ namespace MyPersonalWebAPI.Services.WhatsappClound
                 return "Response message send sucessefull";
 
             }
-            catch (System.Exception ex )
+            catch (System.Exception ex)
             {
-                
-                _logger.LogError(ex,ex.Message);
-                return("error for autoresponse");
+
+                _logger.LogError(ex, ex.Message);
+                return ("error for autoresponse");
             }
         }
 

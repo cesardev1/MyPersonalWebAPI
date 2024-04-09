@@ -40,19 +40,19 @@ builder.Services.Configure<SecretsOptions>(options =>
 
 builder.Services.AddScoped<IRolesServices, RolesServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
-builder.Services.AddScoped<IWhatsAppMessageRepository,WhatsAppMessageRepository>();
+builder.Services.AddScoped<IWhatsAppMessageRepository, WhatsAppMessageRepository>();
 
 // Add services to the container.
 builder.Services.AddScoped<IWhatsappCloudSendMessageServices, WhatsappCloudSendMessageServices>();
-builder.Services.AddScoped<IJWTServices,JWTServices>();
-builder.Services.AddScoped<IWhatsAppMessageHandler,WhatsAppMessageHandler>();
+builder.Services.AddScoped<IJWTServices, JWTServices>();
+builder.Services.AddScoped<IWhatsAppMessageHandler, WhatsAppMessageHandler>();
 builder.Services.AddScoped<WhatsAppUtilities>();
 builder.Services.AddSingleton<IUtil, Util>();
 builder.Services.AddSingleton<IChatGPTServices, ChatGPTServices>();
 builder.Services.AddScoped<ApiKeyUtilities>();
-builder.Services.AddScoped<IApiKeyRepository,ApiKeyRepository>();
-builder.Services.AddScoped<IApiKeyManager,ApiKeyManager>();
-builder.Services.AddScoped<IUserManager,UserManager>();
+builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+builder.Services.AddScoped<IApiKeyManager, ApiKeyManager>();
+builder.Services.AddScoped<IUserManager, UserManager>();
 
 
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING")));
@@ -79,7 +79,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c=>
+builder.Services.AddSwaggerGen(c =>
 {
     //title
     c.SwaggerDoc("v1", new() { Title = "MyPersonalWebAPI", Version = "v1" });
@@ -88,10 +88,10 @@ builder.Services.AddSwaggerGen(c=>
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme.",
-        Name="Authorization",
+        Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme="Bearer"
+        Scheme = "Bearer"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement{
@@ -106,7 +106,7 @@ builder.Services.AddSwaggerGen(c=>
             },
             new string[]{}
         }
-    }); 
+    });
 });
 
 var app = builder.Build();
@@ -118,7 +118,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/",()=>"It's work");
+app.MapGet("/", () => "It's work");
 
 app.UseHttpsRedirection();
 

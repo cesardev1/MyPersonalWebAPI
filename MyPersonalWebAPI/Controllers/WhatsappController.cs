@@ -40,7 +40,7 @@ namespace MyPersonalWebAPI.Controllers
 
 
             //TODO: this can be refactored by or's so that only one conditional remains
-            if (challenge != null && token != null && _whatsAppMessageHandler.UrlTokenValidator(token,challenge))
+            if (challenge != null && token != null && _whatsAppMessageHandler.UrlTokenValidator(token, challenge))
             {
                 return Ok(challenge);
             }

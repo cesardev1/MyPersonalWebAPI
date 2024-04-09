@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MyPersonalWebAPI.Services.Users
 {
-    public class UserManager:IUserManager
+    public class UserManager : IUserManager
     {
         private readonly ILogger<UserManager> _logger;
         private readonly IUserServices _userServices;
@@ -32,20 +32,20 @@ namespace MyPersonalWebAPI.Services.Users
                 newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
 
                 await _userServices.Add(newUser);
-                newUser.Password="";
+                newUser.Password = "";
 
                 return newUser;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error to created user '{newUser.Username}'.",ex);
-                throw new Exception($"Error to created user '{newUser.Username}'.",ex);
+                _logger.LogError($"Error to created user '{newUser.Username}'.", ex);
+                throw new Exception($"Error to created user '{newUser.Username}'.", ex);
             }
-            
+
         }
 
 
-        public async  Task<string> UserAuthenticate(string username, string password)
+        public async Task<string> UserAuthenticate(string username, string password)
         {
             try
             {
@@ -55,16 +55,16 @@ namespace MyPersonalWebAPI.Services.Users
                     throw new UnauthorizedAccessException($"user: {username} not found");
 
 
-                if(!BCrypt.Net.BCrypt.Verify(password, user.Password))
+                if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
                     throw new UnauthorizedAccessException("Incorrect password");
 
                 var tokenString = _JWTServices.GenerateToken(user);
 
                 return tokenString;
             }
-            catch(UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                _logger.LogWarning( ex,ex.Message);
+                _logger.LogWarning(ex, ex.Message);
                 throw;
             }
             catch (System.Exception ex)
