@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /.mono
 */.mono
 /.husky
+.metadata/

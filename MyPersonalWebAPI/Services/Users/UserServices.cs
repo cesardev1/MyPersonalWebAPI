@@ -70,5 +70,10 @@ namespace MyPersonalWebAPI.Services.Users
             }
         }
 
+        public override async Task<IEnumerable<User>> GetAll()
+        {
+            return await base._context.Users.Include(a => a.Role).ToListAsync();
+        }
+
     }
 }

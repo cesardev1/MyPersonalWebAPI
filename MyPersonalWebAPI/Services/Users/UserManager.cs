@@ -75,5 +75,18 @@ namespace MyPersonalWebAPI.Services.Users
 
         }
 
+        public async Task<List<User>> GetAllUser()
+        {
+            try
+            {
+                var listUser= await _userServices.GetAll();
+                return listUser.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error to get all users");
+                throw new Exception("Error to get all users", ex);
+            }
+        }
     }
 }

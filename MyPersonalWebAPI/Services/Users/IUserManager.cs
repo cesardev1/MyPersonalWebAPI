@@ -6,5 +6,6 @@ namespace MyPersonalWebAPI.Services.Users
     {
         Task<User> CreateUser(User newUser);
         Task<string> UserAuthenticate(string username, string password);
+        Task<List<User>> GetAllUser();
     }
 }

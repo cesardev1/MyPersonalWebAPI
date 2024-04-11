@@ -55,7 +55,7 @@ namespace MyPersonalWebAPI.Controllers
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> LogIn([FromBody] User userData)
+        public async Task<IActionResult> LogIn([FromBody] LogInRequest userData)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -63,7 +63,7 @@ namespace MyPersonalWebAPI.Controllers
             {
                 var token = await _userManager.UserAuthenticate(userData.Username, userData.Password);
 
-                return Ok(token);
+                return Ok(new {token});
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -95,6 +95,22 @@ namespace MyPersonalWebAPI.Controllers
             {
                 _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+    
+        [Authorize]
+        [HttpGet()]
+        public async Task<IActionResult> GetAllUser()
+        {
+            try
+            {
+                var users = await _userManager.GetAllUser();
+                return Ok(users);
             }
             catch (Exception ex)
             {
