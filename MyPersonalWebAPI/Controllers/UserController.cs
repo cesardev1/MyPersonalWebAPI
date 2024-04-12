@@ -63,7 +63,7 @@ namespace MyPersonalWebAPI.Controllers
             {
                 var token = await _userManager.UserAuthenticate(userData.Username, userData.Password);
 
-                return Ok(new {token});
+                return Ok(new { token });
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -102,7 +102,7 @@ namespace MyPersonalWebAPI.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
-    
+
         [Authorize]
         [HttpGet()]
         public async Task<IActionResult> GetAllUser()

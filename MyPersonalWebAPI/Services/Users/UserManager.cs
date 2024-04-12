@@ -79,7 +79,7 @@ namespace MyPersonalWebAPI.Services.Users
         {
             try
             {
-                var listUser= await _userServices.GetAll();
+                var listUser = await _userServices.GetAll();
                 return listUser.ToList();
             }
             catch (Exception ex)
