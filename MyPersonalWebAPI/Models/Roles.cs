@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using AutoMapper.Configuration.Annotations;
 
 
 namespace MyPersonalWebAPI.Models
@@ -15,11 +17,26 @@ namespace MyPersonalWebAPI.Models
         [Key]
         public int RoleId { get; set; }
         public string Name { get; set; }
-        public List<RolePermission> RolePermissions { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
 
-        [JsonIgnore]
-        public List<User> Users { get; set; }
+        public List<UserRole> UserRoles { get; set; }
     }
+
+    public class UserRole
+    {
+        [Key]
+        public int UserRoleId { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
+
+        [Required]
+        public int RoleId { get; set; }
+        [ForeignKey("RoleId")]
+        public Roles Role { get; set; }
+    }
+
 }

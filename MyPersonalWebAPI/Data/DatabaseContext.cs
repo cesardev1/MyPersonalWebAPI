@@ -14,7 +14,10 @@ namespace MyPersonalWebAPI.Data
         }
         public DbSet<User> Users => Set<User>();
         public DbSet<Roles> Roles => Set<Roles>();
+        public DbSet<UserRole> userRoles => Set<UserRole>();
         public DbSet<WhatsAppMessage> whatsAppMessages => Set<WhatsAppMessage>();
         public DbSet<ApiKey> apiKey => Set<ApiKey>();
+
+
     }
 }

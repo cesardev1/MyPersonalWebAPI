@@ -29,5 +29,37 @@ namespace MyPersonalWebAPI.Services.Roles
 
         }
 
+        public async Task<Models.UserRole> AddRoleUser(Guid userId, int roleId)
+        {
+
+            var newRoleUser = new UserRole
+            {
+                UserId = userId,
+                RoleId = roleId
+            };
+            var ResponseAddRoleUser = await base._context.userRoles.AddAsync(newRoleUser);
+            await base._context.SaveChangesAsync();
+
+            return ResponseAddRoleUser.Entity;
+        }
+
+        public async Task<List<Models.Roles>> GetUserRoles(Guid userId)
+        {
+            List<Models.Roles> roles = new List<Models.Roles>();
+
+            var RoleList = await base._context.userRoles
+                                .Where(x => x.UserId == userId)
+                                .Include(r => r.Role)
+                                .ToListAsync();
+
+            foreach (var item in RoleList)
+            {
+
+                roles.Add(item.Role);
+            }
+            return roles;
+        }
+
+
     }
 }
