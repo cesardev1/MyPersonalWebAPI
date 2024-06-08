@@ -1,16 +1,9 @@
-﻿
-using AutoMapper.Configuration.Annotations;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyPersonalWebAPI.Models
+namespace MyPersonalWebAPI.Models.Request
 {
-    [Index(nameof(Username), IsUnique = true)]
-    public class User
+    public class NewUserRequest
     {
-        [Key]
-        public Guid UserId { get; set; }
 
         [Required(ErrorMessage = "El nombre de usuario es obligatorio.")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre de usuario debe tener entre 3 y 50 caracteres.")]
@@ -27,13 +20,8 @@ namespace MyPersonalWebAPI.Models
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener entre 8 y 100 caracteres.")]
         public string Password { get; set; }
 
-        [Required]
-        public DateTime CreatedDate { get; set; }
 
         [Required]
-        public DateTime LastModifiedDate { get; set; }
-
-        public List<Models.Roles> UserRoles { get; set; }
-
+        public int[] Roles { get; set; }
     }
 }

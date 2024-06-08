@@ -26,7 +26,7 @@ namespace MyPersonalWebAPI.Services.Users
                 try
                 {
                     var idGuid = new Guid(id);
-                    return await base._context.Users.Include(a => a.Role).FirstOrDefaultAsync(x => x.UserId == idGuid);
+                    return await base._context.Users.Include(a => a.UserRoles).FirstOrDefaultAsync(x => x.UserId == idGuid);
                 }
                 catch (FormatException ex)
                 {
@@ -43,17 +43,14 @@ namespace MyPersonalWebAPI.Services.Users
 
         public async Task<User> GetByName(string name)
         {
-            using (var context = base._context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    return await base._context.Users.Include(a => a.Role).FirstOrDefaultAsync(x => x.Username == name);
-                }
-                catch (System.Exception ex)
-                {
-                    _logger.LogError($"Error to get user '{name}'", ex);
-                    throw;
-                }
+                return await base._context.Users.Where(x => x.Username == name).FirstOrDefaultAsync();
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError($"Error getting user '{name}'", ex);
+                throw;
             }
         }
 
@@ -61,7 +58,7 @@ namespace MyPersonalWebAPI.Services.Users
         {
             try
             {
-                return await base._context.Users.Include(a => a.Role).FirstOrDefaultAsync(x => x.Phone.Equals(phone));
+                return await base._context.Users.Include(a => a.UserRoles).FirstOrDefaultAsync(x => x.Phone.Equals(phone));
             }
             catch (System.Exception ex)
             {
@@ -72,7 +69,7 @@ namespace MyPersonalWebAPI.Services.Users
 
         public override async Task<IEnumerable<User>> GetAll()
         {
-            return await base._context.Users.Include(a => a.Role).ToListAsync();
+            return await base._context.Users.Include(a => a.UserRoles).ToListAsync();
         }
 
     }

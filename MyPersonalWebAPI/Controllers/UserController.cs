@@ -31,7 +31,7 @@ namespace MyPersonalWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] NewUserRequest user)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

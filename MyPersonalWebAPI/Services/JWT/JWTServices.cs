@@ -29,16 +29,23 @@ namespace MyPersonalWebAPI.Services.JWT
             var symmetricKey = Encoding.ASCII.GetBytes(_secretsOptions.Value.JWTSecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
 
+            var claims = new List<Claim>{
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim("UserId", user.UserId.ToString()),
+                new Claim(ClaimTypes.MobilePhone, user.Phone),
+
+            };
+
+            foreach (var item in user.UserRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, item.Name));
+            }
             var descriptor = new SecurityTokenDescriptor
             {
-                Subject = new System.Security.Claims.ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim("UserId", user.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.Name),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.MobilePhone, user.Phone),
-                }),
+                Subject = new System.Security.Claims.ClaimsIdentity(claims),
+
+                //Rol
+
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)
             };

@@ -1,8 +1,10 @@
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MyPersonalWebAPI;
 using MyPersonalWebAPI.Auth;
 using MyPersonalWebAPI.Data;
 using MyPersonalWebAPI.Models;
@@ -119,6 +121,19 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//mapper configuration
+
+var mapperConfig = new MapperConfiguration(m =>
+{
+    m.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+builder.Services.AddMvc();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -127,6 +142,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+
 app.UseCors();
 
 app.MapGet("/", () => "It's work");
