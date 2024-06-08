@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyPersonalWebAPI.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyPersonalWebAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240530162735_Change user-role relation")]
+    partial class Changeuserrolerelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,12 +73,7 @@ namespace MyPersonalWebAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Roles");
                 });
@@ -137,7 +135,7 @@ namespace MyPersonalWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("userRoles");
+                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("MyPersonalWebAPI.Models.Whatsapp.WhatsAppMessage", b =>
@@ -188,13 +186,6 @@ namespace MyPersonalWebAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyPersonalWebAPI.Models.Roles", b =>
-                {
-                    b.HasOne("MyPersonalWebAPI.Models.User", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("MyPersonalWebAPI.Models.UserRole", b =>
                 {
                     b.HasOne("MyPersonalWebAPI.Models.Roles", "Role")
@@ -204,7 +195,7 @@ namespace MyPersonalWebAPI.Migrations
                         .IsRequired();
 
                     b.HasOne("MyPersonalWebAPI.Models.User", "User")
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
