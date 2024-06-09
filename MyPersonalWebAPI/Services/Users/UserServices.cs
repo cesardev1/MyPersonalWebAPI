@@ -58,7 +58,8 @@ namespace MyPersonalWebAPI.Services.Users
         {
             try
             {
-                return await base._context.Users.Include(a => a.UserRoles).FirstOrDefaultAsync(x => x.Phone.Equals(phone));
+                //return await base._context.Users.Include(a => a.UserRoles).FirstOrDefaultAsync(x => x.Phone.Equals(phone));
+                return await base._context.Users.FirstOrDefaultAsync(x => x.Phone.Equals(phone));
             }
             catch (System.Exception ex)
             {
